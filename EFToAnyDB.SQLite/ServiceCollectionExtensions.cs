@@ -26,7 +26,6 @@ namespace EFToAnyDB.SQLite
            
 
             var serviceProvider = services.BuildServiceProvider();
-            var context = serviceProvider.GetRequiredService<EFCoreContext>();
 
             return services;
         }
