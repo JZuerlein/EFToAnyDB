@@ -44,7 +44,7 @@ namespace EFToAnyDB
                         var services = scope.ServiceProvider;
 
                         var context = services.GetService<EFCoreContext>();
-                        var l = context.Database.GetPendingMigrations().ToList();
+
                         if (await ShouldApplyMigrations(context))
                         {
                             context.Database.Migrate();
