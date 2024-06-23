@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using EFToAnyDB.SQLServer;
 using EFToAnyDB.SQLite;
-using EFToAnyDB.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using EFToAnyDB;
@@ -13,15 +12,20 @@ await Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         var configuration = hostContext.Configuration;
-        var provider = configuration.GetValue("Provider", "SqlServer");
 
-        if (provider == "SqlServer")
+        Enum.TryParse(configuration.GetValue("Provider", DBProvider.Sqlite.ToString()), out DBProvider dbProvider);
+        var connectionString = configuration.GetConnectionString(dbProvider.ToString());
+
+        if (connectionString == null) throw new ArgumentException("The connection string was missing");
+
+        switch (dbProvider)
         {
-            services.AddSQLServer(configuration.GetConnectionString("SqlServerConnection"));
-        }
-        else
-        {
-            services.AddSQLite(configuration.GetConnectionString("SqliteConnection"));
+            case DBProvider.SqlServer:
+                services.AddSQLServer(connectionString);
+                break;
+            default:
+                services.AddSQLite(connectionString);
+                break;
         }
 
         services.AddHostedService<ConsoleHostedService>();
