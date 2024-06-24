@@ -26,7 +26,6 @@ namespace EFToAnyDB.SQLite
            
 
             var serviceProvider = services.BuildServiceProvider();
-
             return services;
         }
     }
